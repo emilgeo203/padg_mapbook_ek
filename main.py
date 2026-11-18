@@ -1,8 +1,82 @@
 from tkinter import *
 import tkintermapview
+from mapbook_shared.controler import get_coordinates
+users: list = []
 
-def oczywiscie_ze_tak():
-    print("oczywiscie_ze_tak")
+
+def add_user():
+    name = entry_imie.get()
+    posts = entry_posty.get()
+    location = entry_miejscowosc.get()
+    x, y = get_coordinates(location)
+
+    print('to jest lista', users)
+    users.append({'name': name, 'posty': posts, 'location': location,
+                  'marker': map_widget.set_marker(x, y, text=name)})
+    print('to jest lista', users)
+
+    entry_imie.delete(0, END)
+    entry_posty.delete(0, END)
+    entry_miejscowosc.delete(0, END)
+
+    entry_imie.focus()
+    show_users()
+
+
+def show_users():
+    listbox_lista_obiektow.delete(0,END)
+    for idx, user in enumerate(users):
+        listbox_lista_obiektow.insert(idx, user['name'])
+
+
+def remove_user():
+
+    i= listbox_lista_obiektow.index(ACTIVE)
+    print (i)
+    users.pop(i)
+    show_users()
+
+def edit_user():
+    i = listbox_lista_obiektow.index(ACTIVE)
+    print(i)
+
+    entry_imie.delete(0, END)
+    entry_miejscowosc.delete(0, END)
+    entry_posty.delete(0, END)
+
+    entry_imie.insert(0, users[i]['name'])
+    entry_miejscowosc.insert(0, users[i]['location'])
+    entry_posty.insert(0, users[i]['posty'])
+
+    Button_dodaj_obiekt.config(text='Zapisz zmiany', command=lambda: update_user(i))
+
+
+def update_user(i):
+    new_name = entry_imie,get()
+    new_location = entry_miejscowosc.get()
+    new_posts = entry_posty.get()
+
+
+    users[i]['name'] = entry_imie.get()
+    users[i]['location'] = entry_miejscowosc.get()
+    users[i]['posty'] = entry_posty.get()
+    x,y = get_coordinates(new_location)
+
+    users[i]['marker'].delete()
+
+    entry_imie.delete(0, END)
+    entry_miejscowosc.delete(0, END)
+    entry_posty.delete(0, END)
+
+    Button_dodaj_obiekt.config(text='Dodaj obiekt', command=add_user)
+
+
+
+    show_users()
+    entry_miejscowosc.delete(0, END)
+    entry_imie.delete(0, END)
+    entry_posty.delete(0, END)
+
 
 
 root = Tk()
@@ -25,8 +99,10 @@ label_lista_obiektow = Label(ramka_lista_obiektow, text='Lista obiektów: ')
 listbox_lista_obiektow = Listbox(ramka_lista_obiektow)
 
 Button_pokaz_szczegoly = Button(ramka_lista_obiektow, text='Pokaż szczegóły')
-Button_edytuj_obiekt = Button(ramka_lista_obiektow, text='Edytuj obiekt')
-Button_usun_obiekt = Button(ramka_lista_obiektow, text='Usuń obiekt')
+Button_edytuj_obiekt = Button(ramka_lista_obiektow, text='Edytuj obiekt', command=edit_user)
+Button_usun_obiekt = Button(ramka_lista_obiektow, text='Usuń obiekt', command=remove_user)
+
+
 
 label_lista_obiektow.grid(row=0, column=0, columnspan=3)
 listbox_lista_obiektow.grid(row=1, column=0, columnspan=3)
@@ -53,7 +129,7 @@ entry_imie.grid(row=1, column=1)
 entry_miejscowosc.grid(row=2, column=1)
 entry_posty.grid(row=3, column=1)
 
-Button_dodaj_obiekt = Button(ramka_formularz, text='Dodaj obiekt')
+Button_dodaj_obiekt = Button(ramka_formularz, text='Dodaj obiekt', command=add_user)
 Button_dodaj_obiekt.grid(row=4, column=0)
 
 # RAMKA SZCZEGÓŁY OBIEKTU
@@ -79,5 +155,8 @@ map_widget.set_position(52.23, 21)
 map_widget.set_zoom(6)
 
 map_widget.grid(row=0, column=0, columnspan=7)
+
+
+
 
 root.mainloop()
