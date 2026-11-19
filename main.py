@@ -33,6 +33,7 @@ def remove_user():
 
     i= listbox_lista_obiektow.index(ACTIVE)
     print (i)
+    users[i]['marker'].delete()
     users.pop(i)
     show_users()
 
@@ -77,7 +78,18 @@ def update_user(i):
     entry_imie.delete(0, END)
     entry_posty.delete(0, END)
 
+def show_user_details():
+    i = liczbowa_lista_obiektow.index(ACTIVE)
+    tmp_user = users[i]['name']
+    tmp_posty = users[i]['posty']
+    tmp_miejscowosc = users[i]['miejscowosc']
 
+    label_imie_szczegoly_obiektu_wartosc.config(text=tmp_user)
+    label_posty_szczegoly_obiektu_wartosc.config(text=tmp_posty)
+    label_miejscowosc_szczegoly_obiektu_wartosc.config(text=tmp_miejscowosc)
+
+    map_widget.set_position(users[i]['x'], users[i]['y'])
+    map_widget.set_zoom(11)
 
 root = Tk()
 root.geometry('1024x768')
@@ -117,9 +129,9 @@ label_miejscowosci = Label(ramka_formularz, text='Liczba miejscowości: ')
 label_posty = Label(ramka_formularz, text='Posty: ')
 
 label_formularz.grid(row=0, column=0, columnspan=2)
-label_imie.grid(row=1, column=0)
-label_miejscowosci.grid(row=2, column=0)
-label_posty.grid(row=3, column=0)
+label_imie.grid(row=1, column=0,sticky=W)
+label_miejscowosci.grid(row=2, column=0,sticky=W)
+label_posty.grid(row=3, column=0,sticky=W)
 
 entry_imie = Entry(ramka_formularz)
 entry_miejscowosc = Entry(ramka_formularz)
